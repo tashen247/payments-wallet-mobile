@@ -8,6 +8,12 @@ The interesting part is the backend: balances come from a **double-entry ledger*
 
 > **Demo:** two phones. Phone A scans phone B's QR code and sends R250 with Face ID. Phone B's balance updates live and it gets a push notification.
 
+## Screenshots
+
+<p>
+  <img src="docs/screenshots/home.png" width="260" alt="Wallet home: balance, quick actions and recent transactions" />
+</p>
+
 ## Architecture
 
 ```mermaid
