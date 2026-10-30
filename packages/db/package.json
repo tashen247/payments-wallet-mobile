@@ -12,7 +12,8 @@
     "generate": "drizzle-kit generate",
     "migrate": "tsx scripts/migrate.ts",
     "typecheck": "tsc -p tsconfig.json",
-    "test": "echo \"db is covered by api integration tests\""
+    "test": "echo \"db is covered by api integration tests\"",
+    "test:coverage": "echo \"db is covered by api integration tests\""
   },
   "dependencies": {
     "@wallet/shared": "workspace:*",

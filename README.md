@@ -1,20 +1,12 @@
 # Pay Wallet
 
+[![CI](https://github.com/tashen247/payments-wallet-mobile/actions/workflows/ci.yml/badge.svg)](https://github.com/tashen247/payments-wallet-mobile/actions/workflows/ci.yml)
+
 A production-style mobile wallet for South African rand. Hold a ZAR balance, send money by contact or QR code, request money, and watch your balance update live. Every send is confirmed with Face ID or fingerprint.
 
 The interesting part is the backend: balances come from a **double-entry ledger**, transfers are **idempotent** and **can't overdraw even when they run at the same time**, and side effects go through a **transactional outbox** to a queue, with retries, a dead-letter view and a safe **replay**.
 
 > **Demo:** two phones. Phone A scans phone B's QR code and sends R250 with Face ID. Phone B's balance updates live and it gets a push notification.
-
-## Status
-
-| Area                                                         | State        |
-| ------------------------------------------------------------ | ------------ |
-| Ledger, transfers, top-ups, payment requests, limits, freeze | Done, tested |
-| Outbox relay, worker, retries, dead letters, replay          | Done, tested |
-| WebSocket live updates, Expo push sender                     | Done, tested |
-| Expo app (React Native)                                      | In progress  |
-| AWS CDK stack, CI workflow, ADRs                             | In progress  |
 
 ## Architecture
 
@@ -82,7 +74,7 @@ pnpm install
 docker compose up -d          # Postgres, Redis, LocalStack (SQS)
 pnpm db:migrate
 pnpm db:seed                  # demo users and a few hundred transactions
-pnpm dev:backend              # API on :3000, worker
+pnpm dev:backend              # API on :3000 and the worker
 ```
 
 - API docs (OpenAPI generated from the Zod schemas): http://localhost:3000/docs
@@ -106,6 +98,59 @@ WORKER_FAIL_EVENT_TYPES=transfer.completed pnpm --filter @wallet/worker dev
 # restart the worker without the variable, then press Replay: exactly one notification arrives
 ```
 
+## Running the app on two phones
+
+The app uses Face ID and push notifications, which Expo Go does not support, so it runs as an **Expo development build**.
+
+1. **Point the app at your machine.** Phones can't reach `localhost`. Find your LAN IP (`ipconfig` on Windows, `ipconfig getifaddr en0` on macOS) and create `apps/mobile/.env`:
+   ```
+   EXPO_PUBLIC_API_URL=http://192.168.1.20:3000
+   ```
+   The API listens on `0.0.0.0` in development. If your Wi-Fi blocks device-to-device traffic, use a tunnel instead.
+2. **Push notifications (optional).** Run `npx eas init` in `apps/mobile` and set `EAS_PROJECT_ID`. Push needs physical devices; everything else works on simulators.
+3. **Build and run** on each phone:
+   ```bash
+   cd apps/mobile
+   npx expo run:android   # or: npx expo run:ios
+   # or a cloud build: npx eas build --profile development
+   pnpm dev               # Metro for the dev client
+   ```
+4. **The demo.** Log in as Thandi on phone A and as Sipho on phone B. On B, open **My QR**. On A, tap **Send → Scan QR code**, enter R250 and confirm with Face ID. B's balance updates live and B gets a push notification.
+
+### What's in the app
+
+- Email and password login, with tokens in SecureStore and refresh-token rotation
+- Biometric unlock on open and after a minute in the background, with a 4-digit app PIN fallback
+- Biometric confirmation before **every** send and every request payment
+- Home: balance, the last 5 transactions, and Send, Request and Top up
+- Send by contact search or by scanning a QR code. A scanned code only pre-fills the form: the recipient's name is looked up and shown, and the sender confirms the amount.
+- A receive QR code (`paywallet://pay?to=<accountId>`), which also works as a deep link
+- History with infinite scroll, sent/received/top-up filters, reference search, and a detail screen with a status timeline
+- Payment requests you can pay or decline
+- Live balance over a WebSocket that reconnects with backoff, and push notifications in the background
+- Role-gated admin screens: transfers by status, dead letters with Replay, and freezing accounts
+- Dark mode, accessible labels, loading, empty and error states, and haptics on success
+
+## Deploying to AWS
+
+`infra/` is an AWS CDK app:
+
+- a VPC
+- RDS Postgres 16 (encrypted, private subnets)
+- ElastiCache Redis
+- an SQS queue with a DLQ
+- the API on ECS Fargate behind an ALB, with a `/health` check and a 300-second idle timeout for WebSockets
+- the worker as a second Fargate service
+
+Credentials come from Secrets Manager, never plain environment variables.
+
+```bash
+pnpm synth                         # runs in CI
+cd infra && npx cdk deploy         # needs AWS credentials
+```
+
+The API container runs migrations before it starts.
+
 ## Tests
 
 ```bash
@@ -122,6 +167,10 @@ The integration tests run against a real Postgres and Redis. They include:
 - a freeze racing in-flight transfers
 - retries, backoff, dead-lettering, and a replay that produces no duplicate push
 - the full demo flow end to end: API, worker, WebSocket and push
+
+The app has Jest and React Native Testing Library tests for the send flow (biometric confirm and decline, retrying with the same Idempotency-Key, declined payments), the history list (pagination, filters, empty state) and live-update handling.
+
+CI runs lint, typecheck, all tests with coverage (70% minimum on the API, worker and shared packages), the 10,000-transaction latency check, and `cdk synth`.
 
 ### Performance
 
@@ -145,6 +194,15 @@ packages/db     Drizzle schema, migrations, reconciliation
 infra           AWS CDK: ECS Fargate, RDS, ElastiCache, SQS + DLQ
 docs/decisions  ADRs
 ```
+
+## Decision records
+
+1. [Double-entry ledger with system accounts](docs/decisions/0001-double-entry-ledger.md)
+2. [Balance as a projection, with reconciliation](docs/decisions/0002-balance-projection.md)
+3. [Idempotency rules](docs/decisions/0003-idempotency.md)
+4. [Ordered FOR NO KEY UPDATE locks](docs/decisions/0004-lock-ordering.md)
+5. [Transactional outbox and de-duplication](docs/decisions/0005-outbox.md)
+6. [One store for dead letters](docs/decisions/0006-dead-letters.md)
 
 ## Licence
 

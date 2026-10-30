@@ -1,6 +1,6 @@
-import { createDb, runMigrations } from '../src';
+import { createDb, databaseUrlFromEnv, runMigrations } from '../src';
 
-const url = process.env.DATABASE_URL ?? 'postgres://wallet:wallet@localhost:5432/wallet';
+const url = databaseUrlFromEnv();
 const handle = createDb(url, { max: 1 });
 await runMigrations(handle.db);
 console.log('migrations applied');

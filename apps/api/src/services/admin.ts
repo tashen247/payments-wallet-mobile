@@ -110,12 +110,10 @@ export async function setFrozen(
     );
     if (res.rows.length === 0) throw new AppError(404, 'NOT_FOUND');
     await tx.execute(sql`UPDATE accounts SET frozen = ${frozen} WHERE id = ${accountId}`);
-    await tx
-      .insert(auditEvents)
-      .values({
-        actorId,
-        action: frozen ? 'account.freeze' : 'account.unfreeze',
-        targetId: accountId,
-      });
+    await tx.insert(auditEvents).values({
+      actorId,
+      action: frozen ? 'account.freeze' : 'account.unfreeze',
+      targetId: accountId,
+    });
   });
 }

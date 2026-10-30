@@ -1,3 +1,4 @@
+import { databaseUrlFromEnv } from '@wallet/db';
 import { z } from 'zod';
 
 const list = z
@@ -12,7 +13,7 @@ const list = z
 
 const Env = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
-  DATABASE_URL: z.string().default('postgres://wallet:wallet@localhost:5432/wallet'),
+  DATABASE_URL: z.string(),
   REDIS_URL: z.string().default('redis://localhost:6379'),
   LOG_LEVEL: z.string().default('info'),
   /** sqs: SQS or LocalStack. memory: in-process queue, for running without LocalStack. */
@@ -39,7 +40,7 @@ const Env = z.object({
 
 export type WorkerConfig = z.infer<typeof Env>;
 export function loadConfig(env: NodeJS.ProcessEnv = process.env): WorkerConfig {
-  const config = Env.parse(env);
+  const config = Env.parse({ ...env, DATABASE_URL: databaseUrlFromEnv(env) });
   // Local development defaults to LocalStack from docker-compose and creates the queues.
   if (
     config.NODE_ENV === 'development' &&

@@ -13,6 +13,7 @@ import { eq, sql } from 'drizzle-orm';
 import {
   CARD_FUNDING,
   createDb,
+  databaseUrlFromEnv,
   getSystemAccountId,
   reconcile,
   runMigrations,
@@ -23,7 +24,7 @@ import { getUserAccount } from '../src/services/accounts';
 import { topUp, transfer } from '../src/services/money';
 
 const DEMO_PASSWORD = 'Demo1234!';
-const url = process.env.DATABASE_URL ?? 'postgres://wallet:wallet@localhost:5432/wallet';
+const url = databaseUrlFromEnv();
 const bulk = Number(process.env.SEED_TRANSACTIONS ?? 300);
 
 const demo = [

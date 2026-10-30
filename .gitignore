@@ -18,3 +18,7 @@ coverage/
 # OS
 .DS_Store
 Thumbs.db
+*.log
+apps/mobile/.env
+apps/mobile/ios/
+apps/mobile/android/
