@@ -38,4 +38,17 @@ const Env = z.object({
 });
 
 export type WorkerConfig = z.infer<typeof Env>;
-export const loadConfig = (env: NodeJS.ProcessEnv = process.env): WorkerConfig => Env.parse(env);
+export function loadConfig(env: NodeJS.ProcessEnv = process.env): WorkerConfig {
+  const config = Env.parse(env);
+  // Local development defaults to LocalStack from docker-compose and creates the queues.
+  if (
+    config.NODE_ENV === 'development' &&
+    config.QUEUE_DRIVER === 'sqs' &&
+    !config.SQS_ENDPOINT &&
+    !config.SQS_QUEUE_URL
+  ) {
+    config.SQS_ENDPOINT = 'http://localhost:4566';
+    config.SQS_AUTO_CREATE = true;
+  }
+  return config;
+}
