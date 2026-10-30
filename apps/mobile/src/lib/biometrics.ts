@@ -44,7 +44,14 @@ export async function confirmWithBiometrics(reason: string): Promise<boolean> {
       disableDeviceFallback: true,
     });
     if (result.success) return true;
-    if (result.error !== 'user_fallback' && result.error !== 'lockout') return false;
+    // A deliberate cancel means no. Anything else (lockout, "Use PIN", or Face ID being unavailable,
+    // as it is inside Expo Go on iOS) falls through to the app PIN.
+    if (
+      result.error === 'user_cancel' ||
+      result.error === 'system_cancel' ||
+      result.error === 'app_cancel'
+    )
+      return false;
   }
   return usePinPrompt.getState().ask(reason);
 }
