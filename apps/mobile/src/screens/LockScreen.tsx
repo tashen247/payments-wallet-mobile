@@ -32,7 +32,7 @@ export function LockScreen() {
 
   if (hasPin === false) {
     return (
-      <Screen>
+      <Screen fullScreen>
         <Title>Set an app PIN</Title>
         <Muted>Used when Face ID or fingerprint is not available.</Muted>
         <Field
@@ -65,7 +65,7 @@ export function LockScreen() {
   }
 
   return (
-    <Screen>
+    <Screen fullScreen>
       <Title>Wallet locked</Title>
       {error ? <Text style={{ color: t.danger }}>{error}</Text> : null}
       <Button title="Unlock" onPress={unlock} />

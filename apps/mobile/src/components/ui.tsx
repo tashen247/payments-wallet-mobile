@@ -12,11 +12,23 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { space, useTheme } from '../theme';
 
-export function Screen({ children, scroll = true }: { children: ReactNode; scroll?: boolean }) {
+export function Screen({
+  children,
+  scroll = true,
+  fullScreen = false,
+}: {
+  children: ReactNode;
+  scroll?: boolean;
+  /** No navigation header above it, so it must clear the status bar itself. */
+  fullScreen?: boolean;
+}) {
   const t = useTheme();
   const body = <View style={{ padding: space(4), gap: space(4) }}>{children}</View>;
   return (
-    <SafeAreaView edges={['bottom']} style={{ flex: 1, backgroundColor: t.bg }}>
+    <SafeAreaView
+      edges={fullScreen ? ['top', 'bottom'] : ['bottom']}
+      style={{ flex: 1, backgroundColor: t.bg }}
+    >
       {scroll ? (
         <ScrollView keyboardShouldPersistTaps="handled">{body}</ScrollView>
       ) : (

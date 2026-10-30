@@ -29,7 +29,7 @@ export function LoginScreen() {
   });
 
   return (
-    <Screen>
+    <Screen fullScreen>
       <Title>Welcome back</Title>
       <Muted>Log in to your wallet.</Muted>
       <Controller
@@ -112,7 +112,7 @@ export function RegisterScreen() {
   ] as const;
 
   return (
-    <Screen>
+    <Screen fullScreen>
       <Title>Create your wallet</Title>
       {fields.map((f) => (
         <Controller
