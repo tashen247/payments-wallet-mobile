@@ -1,0 +1,20 @@
+# local planning notes
+PRD.md
+
+# dependencies and builds
+node_modules/
+dist/
+build/
+.expo/
+cdk.out/
+coverage/
+*.tsbuildinfo
+
+# env
+.env
+.env.*
+!.env.example
+
+# OS
+.DS_Store
+Thumbs.db

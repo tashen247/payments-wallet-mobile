@@ -1,0 +1,39 @@
+{
+  "name": "payments-wallet-mobile",
+  "private": true,
+  "version": "0.1.0",
+  "license": "MIT",
+  "packageManager": "pnpm@10.28.0",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "pnpm db:migrate && pnpm db:seed && pnpm -r --parallel --filter ./apps/* dev",
+    "dev:backend": "pnpm db:migrate && pnpm --parallel --filter @wallet/api --filter @wallet/worker dev",
+    "build": "pnpm -r build",
+    "lint": "eslint . && prettier --check .",
+    "format": "prettier --write .",
+    "typecheck": "pnpm -r typecheck",
+    "test": "pnpm -r test",
+    "test:coverage": "pnpm -r test:coverage",
+    "db:migrate": "pnpm --filter @wallet/db migrate",
+    "db:seed": "pnpm --filter @wallet/api seed",
+    "synth": "pnpm --filter @wallet/infra synth"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^22.10.0",
+    "eslint": "^10.14.0",
+    "eslint-config-prettier": "^10.1.8",
+    "globals": "^17.13.0",
+    "prettier": "^3.9.10",
+    "typescript": "~6.0.3",
+    "typescript-eslint": "^8.72.1"
+  },
+  "type": "module",
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
+  }
+}
