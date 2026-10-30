@@ -35,7 +35,11 @@ export function TransactionRow({ tx, onPress }: { tx: TransactionDto; onPress?: 
           {describe(tx)}
         </Text>
         <Text style={{ color: t.muted, fontSize: 13 }} numberOfLines={1}>
-          {[tx.reference, date, tx.status !== 'completed' ? tx.status : null]
+          {[
+            tx.direction === 'topup' ? 'Test card' : tx.reference,
+            date,
+            tx.status !== 'completed' ? tx.status : null,
+          ]
             .filter(Boolean)
             .join(' · ')}
         </Text>
