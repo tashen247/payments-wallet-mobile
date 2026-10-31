@@ -71,10 +71,13 @@ function Gate() {
     headerStyle: { backgroundColor: t.bg },
     headerTintColor: t.text,
     headerShadowVisible: false,
+    // Arrow only: the label would otherwise be the previous route's name, e.g. "(tabs)".
+    headerBackButtonDisplayMode: 'minimal' as const,
+    headerBackTitle: 'Back',
   };
   return (
     <Stack screenOptions={{ ...header, contentStyle: { backgroundColor: t.bg } }}>
-      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      <Stack.Screen name="(tabs)" options={{ headerShown: false, title: 'Back' }} />
       <Stack.Screen name="(auth)" options={{ headerShown: false }} />
       <Stack.Screen name="send" options={{ title: 'Send money' }} />
       <Stack.Screen name="scan" options={{ title: 'Scan to pay' }} />
