@@ -65,6 +65,8 @@ function Gate() {
   if (status === 'signedIn' && !unlocked) return <LockScreen />;
   if (status === 'signedIn' && inAuth) return <Redirect href="/" />;
 
+  // Money screens are pushed, not presented as native modals: on iOS a React Native <Modal> (the PIN
+  // prompt, mounted at the root) cannot appear above a natively presented sheet.
   const header = {
     headerStyle: { backgroundColor: t.bg },
     headerTintColor: t.text,
@@ -74,16 +76,10 @@ function Gate() {
     <Stack screenOptions={{ ...header, contentStyle: { backgroundColor: t.bg } }}>
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-      <Stack.Screen name="send" options={{ title: 'Send money', presentation: 'modal' }} />
-      <Stack.Screen
-        name="scan"
-        options={{ title: 'Scan to pay', presentation: 'fullScreenModal' }}
-      />
-      <Stack.Screen name="topup" options={{ title: 'Top up', presentation: 'modal' }} />
-      <Stack.Screen
-        name="request-new"
-        options={{ title: 'Request money', presentation: 'modal' }}
-      />
+      <Stack.Screen name="send" options={{ title: 'Send money' }} />
+      <Stack.Screen name="scan" options={{ title: 'Scan to pay' }} />
+      <Stack.Screen name="topup" options={{ title: 'Top up' }} />
+      <Stack.Screen name="request-new" options={{ title: 'Request money' }} />
       <Stack.Screen name="transaction/[id]" options={{ title: 'Transaction' }} />
       <Stack.Screen name="pay" options={{ headerShown: false }} />
       <Stack.Screen
