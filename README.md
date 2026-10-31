@@ -18,6 +18,7 @@ The interesting part is the backend: balances come from a **double-entry ledger*
   <img src="docs/screenshots/received.png" width="260" alt="Sipho's wallet after receiving R250 from Thandi" />
   <img src="docs/screenshots/transaction-detail.png" width="260" alt="Transaction detail with its status timeline" />
   <img src="docs/screenshots/history.png" width="260" alt="History with filters and reference search" />
+  <img src="docs/screenshots/admin-accounts.png" width="260" alt="Role-gated admin: freeze or unfreeze accounts" />
 </p>
 
 ## Architecture
