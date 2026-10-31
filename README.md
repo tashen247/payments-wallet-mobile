@@ -12,6 +12,7 @@ The interesting part is the backend: balances come from a **double-entry ledger*
 
 <p>
   <img src="docs/screenshots/home.png" width="260" alt="Wallet home: balance, quick actions and recent transactions" />
+  <img src="docs/screenshots/unlock-pin.png" width="260" alt="Wallet locked: app PIN fallback when Face ID is unavailable" />
 </p>
 
 ## Architecture
