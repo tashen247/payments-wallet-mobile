@@ -134,7 +134,7 @@ export function SendScreen({
           <Title>{formatCents(result.amountCents)}</Title>
           <Muted>{`To ${result.counterparty?.displayName ?? ''}${result.reference ? ` · ${result.reference}` : ''}`}</Muted>
         </Card>
-        <Button title="Done" onPress={() => router.back()} />
+        <Button title="Done" onPress={() => router.dismissTo('/')} />
         <Button
           title="View details"
           variant="secondary"

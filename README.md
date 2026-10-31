@@ -13,6 +13,8 @@ The interesting part is the backend: balances come from a **double-entry ledger*
 <p>
   <img src="docs/screenshots/home.png" width="260" alt="Wallet home: balance, quick actions and recent transactions" />
   <img src="docs/screenshots/unlock-pin.png" width="260" alt="Wallet locked: app PIN fallback when Face ID is unavailable" />
+  <img src="docs/screenshots/confirm-pin.png" width="260" alt="Confirming a R250 send to Sipho with the app PIN" />
+  <img src="docs/screenshots/payment-sent.png" width="260" alt="Payment sent: R250 to Sipho Dlamini" />
 </p>
 
 ## Architecture
