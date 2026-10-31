@@ -27,7 +27,7 @@ export default function TabsLayout() {
       <Tabs.Screen name="receive" options={{ title: 'My QR', tabBarIcon: icon('▣') }} />
       <Tabs.Screen
         name="admin"
-        options={{ title: 'Admin', tabBarIcon: icon('⚙'), href: isAdmin ? '/admin' : null }}
+        options={{ title: 'Admin', tabBarIcon: icon('⚙\uFE0E'), href: isAdmin ? '/admin' : null }}
       />
     </Tabs>
   );
