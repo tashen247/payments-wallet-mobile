@@ -179,18 +179,35 @@ export function SendScreen({
             autoCapitalize="none"
           />
           <Button title="Scan QR code" variant="secondary" onPress={() => router.push('/scan')} />
+          {contacts.data && contacts.data.length > 0 ? (
+            <Muted>Tap a name to choose who to pay.</Muted>
+          ) : null}
           {(contacts.data ?? []).map((c: ContactDto) => (
             <Pressable
               key={c.accountId}
               accessibilityRole="button"
               accessibilityLabel={`Pay ${c.displayName}`}
               onPress={() => setRecipient({ accountId: c.accountId, displayName: c.displayName })}
-              style={{ paddingVertical: space(3) }}
+              style={({ pressed }) => ({
+                flexDirection: 'row',
+                alignItems: 'center',
+                padding: space(3),
+                borderRadius: 12,
+                borderWidth: 1,
+                borderColor: t.border,
+                backgroundColor: pressed ? t.border : t.card,
+              })}
             >
-              <Text style={{ color: t.text, fontWeight: '600' }}>{c.displayName}</Text>
-              <Muted>{c.email}</Muted>
+              <View style={{ flex: 1 }}>
+                <Text style={{ color: t.text, fontWeight: '600' }}>{c.displayName}</Text>
+                <Muted>{c.email}</Muted>
+              </View>
+              <Text style={{ color: t.primary, fontWeight: '700' }}>Choose ›</Text>
             </Pressable>
           ))}
+          {query.trim().length >= 2 && contacts.data?.length === 0 ? (
+            <Muted>No one matches that.</Muted>
+          ) : null}
         </View>
       )}
 
@@ -214,7 +231,7 @@ export function SendScreen({
       ) : null}
       {phase === 'form' && error ? <Text style={{ color: t.danger }}>{error}</Text> : null}
       <Button
-        title={cents ? `Send ${formatCents(cents)}` : 'Send'}
+        title={!chosen ? 'Choose a recipient first' : cents ? `Send ${formatCents(cents)}` : 'Send'}
         onPress={onSend}
         disabled={!chosen || !cents}
         accessibilityHint="Asks for Face ID, fingerprint or your PIN"
