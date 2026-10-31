@@ -143,14 +143,39 @@ export function AdminAccountsScreen() {
       ) : (
         list.data!.map((a) => (
           <Card key={a.accountId}>
-            <Text style={{ color: t.text, fontWeight: '700' }}>{a.displayName}</Text>
-            <Muted>{`${a.email} · ${formatCents(a.balanceCents)}`}</Muted>
-            <Button
-              title={a.frozen ? 'Unfreeze' : 'Freeze'}
-              variant={a.frozen ? 'secondary' : 'danger'}
-              loading={toggle.isPending && toggle.variables?.accountId === a.accountId}
-              onPress={() => toggle.mutate({ accountId: a.accountId, frozen: !a.frozen })}
-            />
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: space(3) }}>
+              <View style={{ flex: 1, gap: 2 }}>
+                <Text style={{ color: t.text, fontWeight: '700' }}>{a.displayName}</Text>
+                <Muted>{a.email}</Muted>
+                <Text style={{ color: t.text }}>{formatCents(a.balanceCents)}</Text>
+              </View>
+              {a.frozen ? (
+                <Text accessibilityLabel="Frozen" style={{ color: t.danger, fontWeight: '700' }}>
+                  FROZEN
+                </Text>
+              ) : null}
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel={`${a.frozen ? 'Unfreeze' : 'Freeze'} ${a.displayName}`}
+                disabled={toggle.isPending}
+                onPress={() => toggle.mutate({ accountId: a.accountId, frozen: !a.frozen })}
+                style={({ pressed }) => ({
+                  paddingHorizontal: space(3),
+                  paddingVertical: space(2),
+                  borderRadius: 10,
+                  borderWidth: 1.5,
+                  borderColor: a.frozen ? t.primary : t.danger,
+                  opacity:
+                    pressed || (toggle.isPending && toggle.variables?.accountId === a.accountId)
+                      ? 0.6
+                      : 1,
+                })}
+              >
+                <Text style={{ color: a.frozen ? t.primary : t.danger, fontWeight: '700' }}>
+                  {a.frozen ? 'Unfreeze' : 'Freeze'}
+                </Text>
+              </Pressable>
+            </View>
           </Card>
         ))
       )}
